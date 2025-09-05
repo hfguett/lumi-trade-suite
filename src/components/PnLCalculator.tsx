@@ -20,6 +20,18 @@ const exchanges = [
   { id: "coinbase", name: "Coinbase Pro", makerFee: 0.5, takerFee: 0.5 },
   { id: "kraken", name: "Kraken", makerFee: 0.16, takerFee: 0.26 },
   { id: "bybit", name: "Bybit", makerFee: 0.1, takerFee: 0.1 },
+  { id: "okx", name: "OKX", makerFee: 0.08, takerFee: 0.1 },
+  { id: "kucoin", name: "KuCoin", makerFee: 0.1, takerFee: 0.1 },
+  { id: "mexc", name: "MEXC", makerFee: 0.2, takerFee: 0.2 },
+  { id: "gate", name: "Gate.io", makerFee: 0.2, takerFee: 0.2 },
+  { id: "huobi", name: "HTX (Huobi)", makerFee: 0.2, takerFee: 0.2 },
+  { id: "bitget", name: "Bitget", makerFee: 0.1, takerFee: 0.1 },
+  { id: "bitfinex", name: "Bitfinex", makerFee: 0.1, takerFee: 0.2 },
+  { id: "gemini", name: "Gemini", makerFee: 0.25, takerFee: 0.35 },
+  { id: "bitstamp", name: "Bitstamp", makerFee: 0.5, takerFee: 0.5 },
+  { id: "ftx", name: "FTX", makerFee: 0.02, takerFee: 0.07 },
+  { id: "bitmex", name: "BitMEX", makerFee: -0.025, takerFee: 0.075 },
+  { id: "dydx", name: "dYdX", makerFee: 0.05, takerFee: 0.1 },
 ];
 
 export function PnLCalculator() {
