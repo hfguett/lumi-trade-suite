@@ -9,31 +9,31 @@ All colors MUST be HSL for consistent theming.
 @layer base {
   :root {
     /* Core Background System */
-    --background: 220 15% 8%;          /* Deep dark blue-gray */
+    --background: 270 25% 6%;          /* Deep dark purple */
     --foreground: 120 5% 95%;          /* Soft white */
     
     /* Card System - Glassmorphism */
-    --card: 220 15% 12%;               /* Elevated dark surface */
+    --card: 270 25% 10%;               /* Elevated dark surface */
     --card-foreground: 120 5% 90%;     /* Card text */
-    --card-glass: 220 15% 15%;         /* Glass effect overlay */
+    --card-glass: 270 25% 13%;         /* Glass effect overlay */
     
     /* Popover System */
-    --popover: 220 15% 10%;
+    --popover: 270 25% 8%;
     --popover-foreground: 120 5% 95%;
     
     /* Primary System - Mint/Emerald Glow */
     --primary: 158 84% 52%;            /* Bright emerald */
     --primary-glow: 158 100% 65%;      /* Glowing mint */
-    --primary-foreground: 220 15% 8%;  /* Dark text on mint */
+    --primary-foreground: 270 25% 6%;  /* Dark text on mint */
     --primary-muted: 158 40% 25%;      /* Subtle mint */
     
     /* Secondary System */
-    --secondary: 220 15% 18%;          /* Elevated surface */
+    --secondary: 270 25% 16%;          /* Elevated surface */
     --secondary-foreground: 120 5% 85%;
     
     /* Muted System */
-    --muted: 220 15% 15%;
-    --muted-foreground: 220 10% 65%;
+    --muted: 270 25% 13%;
+    --muted-foreground: 270 15% 65%;
     
     /* Accent System */
     --accent: 158 30% 20%;             /* Subtle mint accent */
@@ -51,22 +51,22 @@ All colors MUST be HSL for consistent theming.
     --destructive-foreground: 0 0% 98%;
     
     /* Border System */
-    --border: 220 15% 20%;             /* Subtle borders */
+    --border: 270 25% 18%;             /* Subtle borders */
     --border-glow: 158 50% 40%;        /* Glowing borders */
-    --input: 220 15% 16%;
+    --input: 270 25% 14%;
     --ring: 158 84% 52%;               /* Focus ring */
     
     /* Gradient System */
     --gradient-primary: linear-gradient(135deg, hsl(158 84% 52%), hsl(158 100% 65%));
     --gradient-profit: linear-gradient(135deg, hsl(140 85% 55%), hsl(140 100% 70%));
     --gradient-loss: linear-gradient(135deg, hsl(0 85% 60%), hsl(0 100% 75%));
-    --gradient-glass: linear-gradient(135deg, hsl(220 15% 15% / 0.8), hsl(220 15% 18% / 0.6));
+    --gradient-glass: linear-gradient(135deg, hsl(270 25% 13% / 0.8), hsl(270 25% 16% / 0.6));
     
     /* Shadow System */
     --shadow-glow: 0 0 30px hsl(158 84% 52% / 0.3);
     --shadow-profit: 0 0 20px hsl(140 85% 55% / 0.4);
     --shadow-loss: 0 0 20px hsl(0 85% 60% / 0.4);
-    --shadow-glass: 0 8px 32px hsl(220 15% 5% / 0.3);
+    --shadow-glass: 0 8px 32px hsl(270 25% 3% / 0.3);
     
     /* Animation System */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -75,13 +75,13 @@ All colors MUST be HSL for consistent theming.
     --radius: 12px;
     
     /* Sidebar Variables */
-    --sidebar-background: 220 15% 10%;
+    --sidebar-background: 270 25% 8%;
     --sidebar-foreground: 120 5% 90%;
     --sidebar-primary: 158 84% 52%;
-    --sidebar-primary-foreground: 220 15% 8%;
-    --sidebar-accent: 220 15% 16%;
+    --sidebar-primary-foreground: 270 25% 6%;
+    --sidebar-accent: 270 25% 14%;
     --sidebar-accent-foreground: 120 5% 85%;
-    --sidebar-border: 220 15% 18%;
+    --sidebar-border: 270 25% 16%;
     --sidebar-ring: 158 84% 52%;
   }
 
@@ -120,6 +120,12 @@ All colors MUST be HSL for consistent theming.
     background: var(--gradient-glass);
     backdrop-filter: blur(20px);
     border: 1px solid hsl(var(--border));
+    transition: var(--transition-glow);
+  }
+  
+  .glass-card:hover {
+    border-color: hsl(var(--border-glow));
+    box-shadow: 0 0 20px hsl(var(--border-glow) / 0.3);
   }
   
   .glow-primary {

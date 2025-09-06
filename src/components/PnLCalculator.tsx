@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calculator, TrendingUp, TrendingDown } from "lucide-react";
 import { MetricCard } from "./MetricCard";
+import { ExchangeManager, type Exchange } from "./ExchangeManager";
 
 interface PnLResult {
   pnl: number;
@@ -15,7 +16,7 @@ interface PnLResult {
   riskReward: number;
 }
 
-const exchanges = [
+const defaultExchanges: Exchange[] = [
   { id: "binance", name: "Binance", makerFee: 0.1, takerFee: 0.1 },
   { id: "coinbase", name: "Coinbase Pro", makerFee: 0.5, takerFee: 0.5 },
   { id: "kraken", name: "Kraken", makerFee: 0.16, takerFee: 0.26 },
@@ -32,6 +33,10 @@ const exchanges = [
   { id: "ftx", name: "FTX", makerFee: 0.02, takerFee: 0.07 },
   { id: "bitmex", name: "BitMEX", makerFee: -0.025, takerFee: 0.075 },
   { id: "dydx", name: "dYdX", makerFee: 0.05, takerFee: 0.1 },
+  { id: "crypto.com", name: "Crypto.com", makerFee: 0.4, takerFee: 0.4 },
+  { id: "upbit", name: "Upbit", makerFee: 0.25, takerFee: 0.25 },
+  { id: "bithumb", name: "Bithumb", makerFee: 0.25, takerFee: 0.25 },
+  { id: "phemex", name: "Phemex", makerFee: -0.025, takerFee: 0.075 },
 ];
 
 export function PnLCalculator() {
@@ -41,6 +46,7 @@ export function PnLCalculator() {
   const [leverage, setLeverage] = useState("1");
   const [selectedExchange, setSelectedExchange] = useState("binance");
   const [result, setResult] = useState<PnLResult | null>(null);
+  const [exchanges, setExchanges] = useState<Exchange[]>(defaultExchanges);
 
   const calculatePnL = () => {
     const entry = parseFloat(entryPrice);
@@ -84,7 +90,7 @@ export function PnLCalculator() {
     if (entryPrice && exitPrice && quantity) {
       calculatePnL();
     }
-  }, [entryPrice, exitPrice, quantity, leverage, selectedExchange]);
+  }, [entryPrice, exitPrice, quantity, leverage, selectedExchange, exchanges]);
 
   return (
     <div className="space-y-6">
@@ -171,10 +177,17 @@ export function PnLCalculator() {
               </Select>
             </div>
 
+            <ExchangeManager
+              exchanges={exchanges}
+              onExchangesChange={setExchanges}
+              selectedExchange={selectedExchange}
+              onExchangeSelect={setSelectedExchange}
+            />
+
             <Button
               onClick={calculatePnL} 
               variant="hero"
-              className="w-full"
+              className="w-full border border-primary/30 hover:border-primary/60"
             >
               Calculate PnL
             </Button>
