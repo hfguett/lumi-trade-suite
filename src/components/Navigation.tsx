@@ -12,13 +12,15 @@ import {
   Settings,
   Menu,
   X,
-  Activity
+  Activity,
+  Wallet,
+  Search
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const navigationItems = [
-  { title: "Dashboard", url: "/", icon: BarChart3 },
+  { title: "Dashboard", url: "/dashboard", icon: BarChart3 },
   { title: "PnL Calculator", url: "/calculator", icon: Calculator },
   { title: "Trading Journal", url: "/journal", icon: BookOpen },
   { title: "Analytics", url: "/analytics", icon: TrendingUp },
@@ -26,6 +28,8 @@ const navigationItems = [
   { title: "Risk Management", url: "/risk", icon: Shield },
   { title: "Advanced Analytics", url: "/advanced", icon: LineChart },
   { title: "Market Data", url: "/market", icon: Activity },
+  { title: "Spot Portfolio", url: "/portfolio", icon: Wallet },
+  { title: "Wallet Tracker", url: "/wallet", icon: Search },
   { title: "Goal Tracking", url: "/goals", icon: Target },
 ];
 

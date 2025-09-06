@@ -12,6 +12,10 @@ import Analytics from "./pages/Analytics";
 import RiskManagementPage from "./pages/RiskManagement";
 import Goals from "./pages/Goals";
 import Calendar from "./pages/Calendar";
+import Advanced from "./pages/Advanced";
+import MarketDataPage from "./pages/MarketData";
+import SpotPortfolioPage from "./pages/SpotPortfolio";
+import WalletTrackerPage from "./pages/WalletTracker";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,8 +34,10 @@ const App = () => (
           <Route path="/analytics" element={<Layout><Analytics /></Layout>} />
           <Route path="/calendar" element={<Layout><Calendar /></Layout>} />
           <Route path="/risk" element={<Layout><RiskManagementPage /></Layout>} />
-          <Route path="/advanced" element={<Layout><div className="text-center py-20 text-muted-foreground">Advanced Analytics - Coming Soon</div></Layout>} />
-          <Route path="/market" element={<Layout><div className="text-center py-20 text-muted-foreground">Market Data - Coming Soon</div></Layout>} />
+          <Route path="/advanced" element={<Layout><Advanced /></Layout>} />
+          <Route path="/market" element={<Layout><MarketDataPage /></Layout>} />
+          <Route path="/portfolio" element={<Layout><SpotPortfolioPage /></Layout>} />
+          <Route path="/wallet" element={<Layout><WalletTrackerPage /></Layout>} />
           <Route path="/goals" element={<Layout><Goals /></Layout>} />
           <Route path="/settings" element={<Layout><div className="text-center py-20 text-muted-foreground">Settings - Coming Soon</div></Layout>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
