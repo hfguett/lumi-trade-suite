@@ -14,8 +14,11 @@ import Goals from "./pages/Goals";
 import Calendar from "./pages/Calendar";
 import Advanced from "./pages/Advanced";
 import MarketDataPage from "./pages/MarketData";
+import AdvancedPage from "./pages/Advanced";
 import SpotPortfolioPage from "./pages/SpotPortfolio";
 import WalletTrackerPage from "./pages/WalletTracker";
+import TradingToolsPage from "./pages/TradingTools";
+import LiveChartPage from "./pages/LiveChart";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +41,8 @@ const App = () => (
           <Route path="/market" element={<Layout><MarketDataPage /></Layout>} />
           <Route path="/portfolio" element={<Layout><SpotPortfolioPage /></Layout>} />
           <Route path="/wallet" element={<Layout><WalletTrackerPage /></Layout>} />
+          <Route path="/trading-tools" element={<Layout><TradingToolsPage /></Layout>} />
+          <Route path="/live-chart" element={<Layout><LiveChartPage /></Layout>} />
           <Route path="/goals" element={<Layout><Goals /></Layout>} />
           <Route path="/settings" element={<Layout><div className="text-center py-20 text-muted-foreground">Settings - Coming Soon</div></Layout>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

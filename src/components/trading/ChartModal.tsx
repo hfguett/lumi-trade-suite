@@ -1,14 +1,16 @@
-import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { TrendingUp, TrendingDown, Target, StopCircle, Download, BarChart3, Volume2 } from "lucide-react";
-import { TradeEntry, CandleData, ChartTimeframe, ChartInterval } from "@/types/trading";
-import { TradingChart } from "./TradingChart";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { X, Download, Eye, EyeOff, Calendar, TrendingUp, TrendingDown, BarChart3, Calculator } from "lucide-react";
+import { TradeEntry, ChartTimeframe, ChartInterval, CandleData } from "@/types/trading";
 import { format } from "date-fns";
+import { TradingChart } from "./TradingChart";
+import { TradingViewChart } from "./TradingViewChart";
+import { QuickTradeActions } from "./QuickTradeActions";
+import { useState, useMemo } from "react";
 
 interface ChartModalProps {
   isOpen: boolean;
@@ -75,119 +77,164 @@ const generateCandleData = (trade: TradeEntry, timeframe: string, interval: stri
 };
 
 export function ChartModal({ isOpen, onClose, trade }: ChartModalProps) {
-  const [timeframe, setTimeframe] = useState("1W");
-  const [interval, setInterval] = useState("1h");
+  const [selectedTimeframe, setSelectedTimeframe] = useState<ChartTimeframe>(TIMEFRAMES[2]);
+  const [selectedInterval, setSelectedInterval] = useState<ChartInterval>(INTERVALS[3]);
   const [showVolume, setShowVolume] = useState(true);
-  const [candleData, setCandleData] = useState<CandleData[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    if (trade && isOpen) {
-      setIsLoading(true);
-      // Simulate API call delay
-      setTimeout(() => {
-        const data = generateCandleData(trade, timeframe, interval);
-        setCandleData(data);
-        setIsLoading(false);
-      }, 500);
-    }
-  }, [trade, timeframe, interval, isOpen]);
+  const candleData = useMemo(() => {
+    if (!trade) return [];
+    return generateCandleData(trade, selectedTimeframe.value, selectedInterval.value);
+  }, [trade, selectedTimeframe, selectedInterval]);
 
   if (!trade) return null;
 
-  const exportChart = () => {
-    // Mock export functionality
-    console.log("Exporting chart for trade:", trade.id);
+  const convertToTradingViewSymbol = (symbol: string) => {
+    const cleanSymbol = symbol.replace('/', '').toUpperCase();
+    if (cleanSymbol.includes('USDT')) {
+      return `BINANCE:${cleanSymbol}`;
+    }
+    return `BINANCE:${cleanSymbol}USDT`;
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-7xl max-h-[95vh] overflow-hidden">
+      <DialogContent className="max-w-7xl h-[90vh] glass-card">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <BarChart3 className="w-5 h-5" />
-            {trade.symbol} - Trade Analysis
-          </DialogTitle>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <DialogTitle className="text-xl font-bold">
+                {trade?.symbol} Chart Analysis
+              </DialogTitle>
+              <Badge 
+                variant={trade?.direction === "LONG" ? "default" : "secondary"}
+                className="text-sm"
+              >
+                {trade?.direction}
+              </Badge>
+              <Badge 
+                variant={trade?.status === "open" ? "outline" : "secondary"}
+                className="text-sm"
+              >
+                {trade?.status.toUpperCase()}
+              </Badge>
+            </div>
+            <Button variant="ghost" size="sm" onClick={onClose}>
+              <X className="w-4 h-4" />
+            </Button>
+          </div>
         </DialogHeader>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-[80vh]">
-          {/* Chart Area */}
-          <div className="lg:col-span-3 space-y-4">
-            {/* Chart Controls */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <label className="text-sm font-medium">Timeframe:</label>
-                  <Select value={timeframe} onValueChange={setTimeframe}>
-                    <SelectTrigger className="w-20">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {TIMEFRAMES.map(tf => (
-                        <SelectItem key={tf.value} value={tf.value}>
-                          {tf.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+        <div className="flex flex-1 gap-6 overflow-hidden">
+          {/* Chart Section */}
+          <div className="flex-1 flex flex-col">
+            <Tabs defaultValue="tradingview" className="flex-1 flex flex-col">
+              <TabsList className="grid w-full grid-cols-3 mb-4">
+                <TabsTrigger value="tradingview" className="gap-2">
+                  <BarChart3 className="w-4 h-4" />
+                  TradingView
+                </TabsTrigger>
+                <TabsTrigger value="basic" className="gap-2">
+                  <TrendingUp className="w-4 h-4" />
+                  Basic Chart
+                </TabsTrigger>
+                <TabsTrigger value="tools" className="gap-2">
+                  <Calculator className="w-4 h-4" />
+                  Quick Tools
+                </TabsTrigger>
+              </TabsList>
 
-                <div className="flex items-center gap-2">
-                  <label className="text-sm font-medium">Interval:</label>
-                  <Select value={interval} onValueChange={setInterval}>
-                    <SelectTrigger className="w-20">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {INTERVALS.map(iv => (
-                        <SelectItem key={iv.value} value={iv.value}>
-                          {iv.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+              <TabsContent value="tradingview" className="flex-1">
+                <TradingViewChart
+                  symbol={convertToTradingViewSymbol(trade?.symbol || '')}
+                  trades={trade ? [trade] : []}
+                  height={500}
+                  showControls={true}
+                />
+              </TabsContent>
 
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowVolume(!showVolume)}
-                  className="gap-2"
-                >
-                  <Volume2 className="w-4 h-4" />
-                  Volume
-                </Button>
-              </div>
-
-              <Button variant="outline" size="sm" onClick={exportChart} className="gap-2">
-                <Download className="w-4 h-4" />
-                Export
-              </Button>
-            </div>
-
-            {/* Chart */}
-            <Card className="p-4 h-full min-h-[500px]">
-              {isLoading ? (
-                <div className="flex items-center justify-center h-full">
-                  <div className="text-center">
-                    <div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
-                    <p className="text-muted-foreground">Loading chart data...</p>
+              <TabsContent value="basic" className="flex-1 flex flex-col">
+                {/* Chart Controls */}
+                <div className="flex items-center justify-between mb-4 p-3 bg-muted/50 rounded-lg">
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
+                      <label className="text-sm font-medium">Timeframe:</label>
+                      <Select value={selectedTimeframe.value} onValueChange={(value) => {
+                        const timeframe = TIMEFRAMES.find(t => t.value === value);
+                        if (timeframe) setSelectedTimeframe(timeframe);
+                      }}>
+                        <SelectTrigger className="w-24">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {TIMEFRAMES.map(tf => (
+                            <SelectItem key={tf.value} value={tf.value}>
+                              {tf.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div className="flex items-center gap-2">
+                      <label className="text-sm font-medium">Interval:</label>
+                      <Select value={selectedInterval.value} onValueChange={(value) => {
+                        const interval = INTERVALS.find(i => i.value === value);
+                        if (interval) setSelectedInterval(interval);
+                      }}>
+                        <SelectTrigger className="w-20">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {INTERVALS.map(interval => (
+                            <SelectItem key={interval.value} value={interval.value}>
+                              {interval.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowVolume(!showVolume)}
+                      className="gap-2"
+                    >
+                      {showVolume ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                      Volume
+                    </Button>
+                    <Button variant="outline" size="sm" className="gap-2">
+                      <Download className="w-4 h-4" />
+                      Export
+                    </Button>
                   </div>
                 </div>
-              ) : (
-                <TradingChart 
-                  candleData={candleData}
-                  trade={trade}
-                  showVolume={showVolume}
+
+                {/* Chart */}
+                <div className="flex-1 bg-muted/20 rounded-lg">
+                  <TradingChart
+                    candleData={candleData}
+                    trade={trade!}
+                    showVolume={showVolume}
+                  />
+                </div>
+              </TabsContent>
+
+              <TabsContent value="tools" className="flex-1">
+                <QuickTradeActions 
+                  currentSymbol={convertToTradingViewSymbol(trade?.symbol || '')}
+                  currentPrice={trade?.entryPrice || 0}
                 />
-              )}
-            </Card>
+              </TabsContent>
+            </Tabs>
           </div>
 
           {/* Trade Details Panel */}
-          <div className="space-y-4 overflow-y-auto">
+          <div className="w-80 space-y-4 overflow-y-auto">
             {/* Trade Summary */}
-            <Card className="p-4">
+            <Card className="glass-card p-4">
               <h3 className="font-semibold mb-3">Trade Summary</h3>
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -216,9 +263,9 @@ export function ChartModal({ isOpen, onClose, trade }: ChartModalProps) {
             </Card>
 
             {/* Entry Details */}
-            <Card className="p-4">
+            <Card className="glass-card p-4">
               <h3 className="font-semibold mb-3 flex items-center gap-2">
-                <Target className="w-4 h-4 text-blue-500" />
+                <TrendingUp className="w-4 h-4 text-primary" />
                 Entry
               </h3>
               <div className="space-y-2">
@@ -239,9 +286,9 @@ export function ChartModal({ isOpen, onClose, trade }: ChartModalProps) {
 
             {/* Stop Loss */}
             {trade.stopPrice && (
-              <Card className="p-4">
+              <Card className="glass-card p-4">
                 <h3 className="font-semibold mb-3 flex items-center gap-2">
-                  <StopCircle className="w-4 h-4 text-red-500" />
+                  <TrendingDown className="w-4 h-4 text-loss" />
                   Stop Loss
                 </h3>
                 <div className="flex justify-between">
@@ -253,19 +300,19 @@ export function ChartModal({ isOpen, onClose, trade }: ChartModalProps) {
 
             {/* Exits */}
             {trade.exits.length > 0 && (
-              <Card className="p-4">
+              <Card className="glass-card p-4">
                 <h3 className="font-semibold mb-3 flex items-center gap-2">
                   {trade.totalPnL >= 0 ? (
-                    <TrendingUp className="w-4 h-4 text-green-500" />
+                    <TrendingUp className="w-4 h-4 text-profit" />
                   ) : (
-                    <TrendingDown className="w-4 h-4 text-red-500" />
+                    <TrendingDown className="w-4 h-4 text-loss" />
                   )}
                   Exits ({trade.exits.length})
                 </h3>
                 <div className="space-y-3">
                   {trade.exits.map((exit, index) => (
                     <div key={exit.id}>
-                      {index > 0 && <Separator className="my-2" />}
+                      {index > 0 && <div className="border-t border-border my-2" />}
                       <div className="space-y-2">
                         <div className="flex justify-between">
                           <span className="text-sm text-muted-foreground">Price</span>
@@ -294,7 +341,7 @@ export function ChartModal({ isOpen, onClose, trade }: ChartModalProps) {
 
             {/* Notes & Tags */}
             {(trade.notes || trade.tags.length > 0) && (
-              <Card className="p-4">
+              <Card className="glass-card p-4">
                 <h3 className="font-semibold mb-3">Notes & Tags</h3>
                 {trade.notes && (
                   <p className="text-sm text-muted-foreground mb-3">{trade.notes}</p>

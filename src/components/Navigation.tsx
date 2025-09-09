@@ -23,6 +23,8 @@ const navigationItems = [
   { title: "Dashboard", url: "/dashboard", icon: BarChart3 },
   { title: "PnL Calculator", url: "/calculator", icon: Calculator },
   { title: "Trading Journal", url: "/journal", icon: BookOpen },
+  { title: "Live Chart", url: "/live-chart", icon: Activity },
+  { title: "Trading Tools", url: "/trading-tools", icon: Calculator },
   { title: "Analytics", url: "/analytics", icon: TrendingUp },
   { title: "Calendar", url: "/calendar", icon: Calendar },
   { title: "Risk Management", url: "/risk", icon: Shield },
