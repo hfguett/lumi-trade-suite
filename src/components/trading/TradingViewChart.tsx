@@ -173,14 +173,16 @@ export function TradingViewChart({
   };
 
   useEffect(() => {
-    const timer = setTimeout(() => {
+    const checkTradingView = () => {
       if (window.TradingView) {
         initializeChart();
       } else {
-        setIsLoading(false);
+        // Keep checking until TradingView loads
+        setTimeout(checkTradingView, 500);
       }
-    }, 100);
+    };
 
+    const timer = setTimeout(checkTradingView, 100);
     return () => clearTimeout(timer);
   }, [currentSymbol, timeframe, height]);
 

@@ -9,11 +9,19 @@ import { Calculator, TrendingUp, TrendingDown, Target, AlertTriangle, DollarSign
 import { toast } from "@/hooks/use-toast";
 
 interface QuickTradeActionsProps {
-  currentSymbol: string;
+  symbol?: string;
+  currentSymbol?: string;
   currentPrice?: number;
+  compact?: boolean;
 }
 
-export function QuickTradeActions({ currentSymbol, currentPrice = 0 }: QuickTradeActionsProps) {
+export function QuickTradeActions({ 
+  symbol,
+  currentSymbol, 
+  currentPrice = 0, 
+  compact = false 
+}: QuickTradeActionsProps) {
+  const displaySymbol = symbol || currentSymbol || "BINANCE:BTCUSDT";
   const [position, setPosition] = useState<'LONG' | 'SHORT'>('LONG');
   const [entryPrice, setEntryPrice] = useState(currentPrice.toString());
   const [quantity, setQuantity] = useState('');
@@ -80,10 +88,10 @@ export function QuickTradeActions({ currentSymbol, currentPrice = 0 }: QuickTrad
         <div className="flex items-center gap-2 mb-4">
           <Calculator className="w-5 h-5 text-primary" />
           <h3 className="font-semibold">Quick Trade Setup</h3>
-          <Badge variant="outline">{currentSymbol.split(':')[1] || currentSymbol}</Badge>
+          <Badge variant="outline">{displaySymbol.split(':')[1] || displaySymbol}</Badge>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className={`grid grid-cols-1 gap-4 ${compact ? '' : 'md:grid-cols-2'}`}>
           {/* Left Column */}
           <div className="space-y-4">
             {/* Direction */}
@@ -199,58 +207,62 @@ export function QuickTradeActions({ currentSymbol, currentPrice = 0 }: QuickTrad
       </Card>
 
       {/* Risk Metrics */}
-      <Card className="glass-card p-4">
-        <h4 className="font-semibold mb-3 flex items-center gap-2">
-          <Target className="w-4 h-4 text-primary" />
-          Risk Metrics
-        </h4>
-        
-        <div className="grid grid-cols-2 gap-4">
-          <div className="text-center p-3 bg-muted/50 rounded-lg">
-            <p className="text-sm text-muted-foreground">Risk/Reward</p>
-            <p className={`text-lg font-bold ${riskReward >= 2 ? 'text-profit' : riskReward >= 1 ? 'text-neutral' : 'text-loss'}`}>
-              1:{riskReward > 0 ? riskReward.toFixed(2) : '0.00'}
-            </p>
-          </div>
+      {!compact && (
+        <Card className="glass-card p-4">
+          <h4 className="font-semibold mb-3 flex items-center gap-2">
+            <Target className="w-4 h-4 text-primary" />
+            Risk Metrics
+          </h4>
           
-          <div className="text-center p-3 bg-muted/50 rounded-lg">
-            <p className="text-sm text-muted-foreground">Position Size</p>
-            <p className="text-lg font-bold font-mono">
-              {positionSize > 0 ? positionSize.toFixed(4) : '0.0000'}
-            </p>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="text-center p-3 bg-muted/50 rounded-lg">
+              <p className="text-sm text-muted-foreground">Risk/Reward</p>
+              <p className={`text-lg font-bold ${riskReward >= 2 ? 'text-profit' : riskReward >= 1 ? 'text-neutral' : 'text-loss'}`}>
+                1:{riskReward > 0 ? riskReward.toFixed(2) : '0.00'}
+              </p>
+            </div>
+            
+            <div className="text-center p-3 bg-muted/50 rounded-lg">
+              <p className="text-sm text-muted-foreground">Position Size</p>
+              <p className="text-lg font-bold font-mono">
+                {positionSize > 0 ? positionSize.toFixed(4) : '0.0000'}
+              </p>
+            </div>
           </div>
-        </div>
 
-        {riskReward > 0 && riskReward < 1.5 && (
-          <div className="mt-3 p-2 bg-loss/10 border border-loss/20 rounded-lg flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 text-loss" />
-            <p className="text-sm text-loss">Low risk/reward ratio. Consider adjusting levels.</p>
-          </div>
-        )}
-      </Card>
+          {riskReward > 0 && riskReward < 1.5 && (
+            <div className="mt-3 p-2 bg-loss/10 border border-loss/20 rounded-lg flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 text-loss" />
+              <p className="text-sm text-loss">Low risk/reward ratio. Consider adjusting levels.</p>
+            </div>
+          )}
+        </Card>
+      )}
 
       {/* Market Quick Stats */}
-      <Card className="glass-card p-4">
-        <h4 className="font-semibold mb-3 flex items-center gap-2">
-          <DollarSign className="w-4 h-4 text-primary" />
-          Market Info
-        </h4>
-        
-        <div className="space-y-2">
-          <div className="flex justify-between">
-            <span className="text-sm text-muted-foreground">Current Price:</span>
-            <span className="text-sm font-mono">${currentPrice.toLocaleString()}</span>
+      {!compact && (
+        <Card className="glass-card p-4">
+          <h4 className="font-semibold mb-3 flex items-center gap-2">
+            <DollarSign className="w-4 h-4 text-primary" />
+            Market Info
+          </h4>
+          
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <span className="text-sm text-muted-foreground">Current Price:</span>
+              <span className="text-sm font-mono">${currentPrice.toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-sm text-muted-foreground">24h Change:</span>
+              <span className="text-sm font-mono text-profit">+2.34%</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-sm text-muted-foreground">Volume:</span>
+              <span className="text-sm font-mono">1.2M</span>
+            </div>
           </div>
-          <div className="flex justify-between">
-            <span className="text-sm text-muted-foreground">24h Change:</span>
-            <span className="text-sm font-mono text-profit">+2.34%</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-sm text-muted-foreground">Volume:</span>
-            <span className="text-sm font-mono">1.2M</span>
-          </div>
-        </div>
-      </Card>
+        </Card>
+      )}
     </div>
   );
 }
